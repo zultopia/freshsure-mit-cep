@@ -114,7 +114,7 @@ export default function LoginPage() {
           Log In
         </h1>
         <p 
-          className="text-center mb-8"
+          className="text-center mb-4"
           style={{ 
             color: '#949494',
             fontSize: '15px',
@@ -123,6 +123,26 @@ export default function LoginPage() {
         >
           To log in to an account in FreSure,<br />enter your email and password
         </p>
+
+        {/* Development Notice */}
+        <div 
+          className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 mx-auto"
+          style={{ 
+            maxWidth: '321px',
+            fontSize: '12px'
+          }}
+        >
+          <p className="text-yellow-800 font-medium mb-2">
+            ⚠️ Web App Under Development
+          </p>
+          <p className="text-yellow-700 leading-relaxed">
+            Since the web app is still under development, all content displayed here uses mock data. Login with accounts:
+          </p>
+          <div className="mt-3 space-y-1 text-yellow-700">
+            <p><strong>Farmer:</strong> farmer@example.com / password123</p>
+            <p><strong>Retail:</strong> retail@example.com / password123</p>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {error && (

@@ -26,7 +26,7 @@ const NavBar = () => {
       ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-[9999] md:hidden shadow-lg">
       <div className="flex justify-around items-center h-16">
         {navItems.map((item) => {
           // For profile, also highlight if on profile-related pages (settings, terms, privacy)

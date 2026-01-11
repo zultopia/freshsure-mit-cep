@@ -7,7 +7,7 @@ import { useAuthStore } from '@/lib/store';
 import { retailAPI } from '@/lib/api';
 import NavBar from '@/components/NavBar';
 import StatusBadge from '@/components/StatusBadge';
-import { HiCube, HiArrowLeft, HiChevronDown } from 'react-icons/hi';
+import { HiCube, HiArrowLeft, HiChevronDown, HiX } from 'react-icons/hi';
 import { useHydration } from '@/lib/useHydration';
 
 interface InventoryItem {
@@ -328,7 +328,7 @@ function InventoryContent() {
       {/* Product Detail Modal */}
       {selectedProduct && (
         <div 
-          className="fixed inset-0 z-50 flex items-end"
+          className="fixed inset-0 z-[10000] flex items-end"
           onClick={handleCloseModal}
         >
           {/* Blur Background */}
@@ -336,16 +336,28 @@ function InventoryContent() {
           
           {/* Modal Content */}
           <div 
-            className="relative w-full bg-white rounded-t-3xl shadow-2xl max-h-[90vh] overflow-y-auto animate-slide-up"
+            className="relative w-full bg-white rounded-t-3xl shadow-2xl max-h-[85vh] overflow-y-auto animate-slide-up"
             onClick={(e) => e.stopPropagation()}
             style={{ 
               borderTopLeftRadius: '24px',
               borderTopRightRadius: '24px',
             }}
           >
-            {/* Drag Handle */}
-            <div className="flex justify-center pt-3 pb-2">
-              <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
+            {/* Header with Close Button */}
+            <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-6 pt-4 pb-2 border-b border-gray-200">
+              <div className="flex-1"></div>
+              <div className="flex-1 flex justify-center">
+                <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
+              </div>
+              <div className="flex-1 flex justify-end">
+                <button
+                  onClick={handleCloseModal}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                  aria-label="Close modal"
+                >
+                  <HiX className="text-2xl text-gray-600" />
+                </button>
+              </div>
             </div>
 
             <div className="px-6 pb-8">
