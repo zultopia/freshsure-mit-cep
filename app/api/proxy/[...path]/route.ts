@@ -1,6 +1,3 @@
-// Next.js API Route sebagai proxy untuk menghindari CORS
-// Alternatif jika backend tidak bisa diubah CORS-nya
-
 import { NextRequest, NextResponse } from 'next/server';
 import { BACKEND_API_URL } from '@/lib/api-config';
 
@@ -47,13 +44,13 @@ export async function DELETE(
 }
 
 export async function OPTIONS() {
-  // Handle preflight requests
   return new NextResponse(null, {
     status: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Expose-Headers': 'Content-Type',
     },
   });
 }
@@ -67,27 +64,37 @@ async function proxyRequest(
     const url = new URL(request.url);
     const queryString = url.search;
     
-    // Join path array menjadi string (contoh: ['auth', 'login'] -> 'auth/login')
     const targetPath = path.join('/');
+    let targetUrl = `${API_BASE_URL}/${targetPath}${queryString}`;
     
-    // Build target URL: http://localhost:3000/api/auth/login
-    const targetUrl = `${API_BASE_URL}/${targetPath}${queryString}`;
+    if (targetUrl.includes('localhost')) {
+      targetUrl = targetUrl.replace('localhost', '127.0.0.1');
+    }
 
     console.log(`[Proxy] ${method} ${targetUrl}`);
 
-    const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-    };
+    const requestContentType = request.headers.get('content-type') || '';
+    const isMultipart = requestContentType.includes('multipart/form-data');
 
-    // Forward authorization header
+    const headers: HeadersInit = {};
+
+    if (!isMultipart) {
+      headers['Content-Type'] = 'application/json';
+    }
+
     const authHeader = request.headers.get('authorization');
     if (authHeader) {
       headers['Authorization'] = authHeader;
     }
 
-    const body = method !== 'GET' && method !== 'DELETE' 
-      ? await request.text() 
-      : undefined;
+    let body: BodyInit | undefined;
+    if (method !== 'GET' && method !== 'DELETE') {
+      if (isMultipart) {
+        body = await request.formData();
+      } else {
+        body = await request.text();
+      }
+    }
 
     const response = await fetch(targetUrl, {
       method,
@@ -95,7 +102,6 @@ async function proxyRequest(
       body,
     });
 
-    // Handle non-JSON responses
     const contentType = response.headers.get('content-type');
     let data;
     
@@ -111,13 +117,38 @@ async function proxyRequest(
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Expose-Headers': 'Content-Type',
       },
     });
   } catch (error: any) {
     console.error('[Proxy Error]', error);
+    
+    let errorMessage = 'Unable to connect to server. Please try again later.';
+    let statusCode = 500;
+    
+    if (error.cause) {
+      const cause = error.cause;
+      if (cause.code === 'ENOTFOUND' || cause.code === 'ECONNREFUSED') {
+        errorMessage = 'Server is not available. Please check if the backend server is running.';
+        statusCode = 503;
+      } else if (cause.code === 'ETIMEDOUT') {
+        errorMessage = 'Request timed out. Please try again.';
+        statusCode = 504;
+      }
+    } else if (error.message) {
+      const msg = error.message.toLowerCase();
+      if (msg.includes('fetch failed') || msg.includes('network')) {
+        errorMessage = 'Unable to connect to server. Please check your connection and try again.';
+        statusCode = 503;
+      } else if (msg.includes('timeout')) {
+        errorMessage = 'Request timed out. Please try again.';
+        statusCode = 504;
+      }
+    }
+    
     return NextResponse.json(
-      { error: error.message || 'Proxy error', details: error.toString() },
-      { status: 500 }
+      { error: errorMessage },
+      { status: statusCode }
     );
   }
 }

@@ -8,7 +8,6 @@ const api = axios.create({
   },
 });
 
-// Add token to requests
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
     const token = localStorage.getItem('token');
@@ -19,7 +18,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -34,7 +32,6 @@ api.interceptors.response.use(
   }
 );
 
-// Auth API
 export const authAPI = {
   login: async (email: string, password: string) => {
     const response = await api.post('/auth/login', { email, password });
@@ -56,7 +53,6 @@ export const authAPI = {
   },
 };
 
-// Dashboard API
 export const dashboardAPI = {
   getDashboard: async (companyId: string) => {
     const response = await api.get('/analytics/dashboard', {
@@ -72,7 +68,6 @@ export const dashboardAPI = {
   },
 };
 
-// Batches API
 export const batchesAPI = {
   getAll: async (params?: {
     page?: number;
@@ -95,7 +90,6 @@ export const batchesAPI = {
   },
 };
 
-// Recommendations API
 export const recommendationsAPI = {
   getAll: async (params?: {
     page?: number;
@@ -127,7 +121,6 @@ export const recommendationsAPI = {
   },
 };
 
-// Actions API
 export const actionsAPI = {
   getAll: async (params?: {
     page?: number;
@@ -154,7 +147,6 @@ export const actionsAPI = {
   },
 };
 
-// Feedback API
 export const feedbackAPI = {
   getAll: async (params?: {
     page?: number;
@@ -175,7 +167,6 @@ export const feedbackAPI = {
   },
 };
 
-// Commodities API
 export const commoditiesAPI = {
   getAll: async () => {
     const response = await api.get('/commodities');
@@ -187,7 +178,6 @@ export const commoditiesAPI = {
   },
 };
 
-// Retail API
 export const retailAPI = {
   getInventory: async (params?: {
     storeId?: string;
@@ -205,7 +195,6 @@ export const retailAPI = {
   },
 };
 
-// Quality API
 export const qualityAPI = {
   getLatestScore: async (batchId: string) => {
     const response = await api.get(`/quality/batches/${batchId}/scores/latest`);
@@ -232,7 +221,6 @@ export const qualityAPI = {
   },
 };
 
-// Sensors API
 export const sensorsAPI = {
   getAll: async (params?: {
     page?: number;
@@ -252,7 +240,6 @@ export const sensorsAPI = {
   },
 };
 
-// Logistics API
 export const logisticsAPI = {
   getRoutes: async (params?: {
     page?: number;
@@ -276,7 +263,6 @@ export const logisticsAPI = {
   },
 };
 
-// Outcomes API
 export const outcomesAPI = {
   getAll: async (params?: {
     page?: number;
@@ -299,7 +285,6 @@ export const outcomesAPI = {
   },
 };
 
-// Analytics API
 export const analyticsAPI = {
   getWeeklyMetrics: async (params?: {
     page?: number;

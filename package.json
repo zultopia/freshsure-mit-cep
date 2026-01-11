@@ -11,8 +11,10 @@
     "postinstall": "node -e \"try { require('@next/swc-darwin-arm64'); } catch(e) { console.log('SWC binary will be downloaded on first run'); }\""
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.90.1",
     "axios": "^1.6.2",
     "date-fns": "^3.0.6",
+    "lucide-react": "^0.562.0",
     "next": "^14.2.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

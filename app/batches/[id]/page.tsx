@@ -100,7 +100,7 @@ export default function BatchDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary-light to-white pb-20 md:pb-8">
+    <div className="min-h-screen pb-20 md:pb-8">
       <div className="max-w-4xl mx-auto px-4 py-6 md:py-8">
         <div className="flex items-center gap-4 mb-6">
           <Link
@@ -113,7 +113,7 @@ export default function BatchDetailPage() {
         </div>
 
         {/* Batch Info */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <div className="flex items-start space-x-4 mb-4">
             <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
               <HiCube className="text-2xl text-gray-600" />
@@ -144,7 +144,7 @@ export default function BatchDetailPage() {
 
         {/* Quality Score */}
         {qualityScore && (
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
             <h2 className="text-xl font-bold mb-4">Latest Quality Score</h2>
             <div className="grid grid-cols-3 gap-4">
               <div>
@@ -169,7 +169,7 @@ export default function BatchDetailPage() {
 
         {/* Sensor Readings */}
         {sensorReadings.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-bold mb-4">Sensor Readings</h2>
             <div className="overflow-x-auto">
               <table className="w-full">

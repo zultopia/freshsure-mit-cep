@@ -96,7 +96,7 @@ export default function BatchesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary-light to-white pb-20 md:pb-8">
+    <div className="min-h-screen pb-20 md:pb-8">
       <div className="max-w-7xl mx-auto px-4 py-6 md:py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Batches</h1>
@@ -109,7 +109,7 @@ export default function BatchesPage() {
           </Link>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
           {batches.length === 0 ? (
             <div className="flex items-center justify-center p-12">
               <p className="text-gray-500">No batches found</p>

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
+import { HiEye, HiEyeOff } from 'react-icons/hi';
 import { authAPI } from '@/lib/api';
 import { useAuthStore } from '@/lib/store';
 
@@ -17,6 +18,7 @@ export default function LoginPage() {
   const { setAuth } = useAuthStore();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -30,46 +32,97 @@ export default function LoginPage() {
       setError('');
       const response = await authAPI.login(data.email, data.password);
       
-      // Set auth state
-      setAuth(response.user, response.token);
+      const user = response.user;
+      // Simpan path asli dari database tanpa konversi
+      // Konversi hanya dilakukan saat menampilkan gambar di component
+      setAuth(user, response.token);
       
-      // Wait a bit to ensure state is persisted before redirect
       await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Redirect to home
       router.push('/');
-      router.refresh(); // Force refresh to ensure state is loaded
+      router.refresh();
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed. Please try again.');
+      let errorMessage = 'Login failed. Please try again.';
+      
+      if (err.response) {
+        const status = err.response.status;
+        const data = err.response.data;
+        
+        if (status === 401) {
+          errorMessage = 'Invalid email or password. Please check your credentials and try again.';
+        } else if (status === 404) {
+          errorMessage = 'User not found. Please check your email and try again.';
+        } else if (status === 400) {
+          errorMessage = data?.error || data?.message || 'Invalid request. Please check your information and try again.';
+        } else if (status >= 500) {
+          errorMessage = 'Server is temporarily unavailable. Please try again in a few moments.';
+        } else if (data?.error) {
+          errorMessage = data.error;
+        } else if (data?.message) {
+          errorMessage = data.message;
+        }
+      } else if (err.message) {
+        const msg = err.message.toLowerCase();
+        if (msg.includes('fetch') || msg.includes('network') || msg.includes('failed to fetch')) {
+          errorMessage = 'Unable to connect to server. Please check your internet connection and try again.';
+        } else if (msg.includes('timeout')) {
+          errorMessage = 'Request timed out. Please try again.';
+        } else if (!msg.includes('login') && !msg.includes('password') && !msg.includes('email')) {
+          errorMessage = 'Something went wrong. Please try again.';
+        }
+      }
+      
+      setError(errorMessage);
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary-light to-white flex items-center justify-center px-4 py-8 pb-24 md:pb-8">
+    <div className="min-h-screen flex items-center justify-center px-4 pt-20 pb-24 md:pt-16 md:pb-8">
       <div className="w-full max-w-md">
-        {/* Logo Placeholder */}
         <div className="flex justify-center mb-6">
-          <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center">
-            <span className="text-gray-600 font-bold text-lg">LOGO</span>
-          </div>
+          <img 
+            src="/logo.svg" 
+            alt="FreSure Logo" 
+            style={{ width: '72.03px', height: '56.31px' }}
+            className="object-contain"
+          />
         </div>
 
-        {/* Title */}
-        <h1 className="text-3xl font-bold text-center mb-2">Log In</h1>
-        <p className="text-gray-500 text-center mb-8 text-sm">
-          To log in to an account in FreshSure, enter your email and password
+        <h1 
+          className="text-center mb-2"
+          style={{ 
+            fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif',
+            fontWeight: 600,
+            fontSize: '20px'
+          }}
+        >
+          Log In
+        </h1>
+        <p 
+          className="text-center mb-8"
+          style={{ 
+            color: '#949494',
+            fontSize: '15px',
+            fontWeight: 400
+          }}
+        >
+          To log in to an account in FreSure,<br />enter your email and password
         </p>
 
-        {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-              {error}
+            <div className="flex justify-center">
+              <div 
+                className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"
+                style={{ width: '321px' }}
+              >
+                {error}
+              </div>
             </div>
           )}
 
-          <div>
+          <div className="flex justify-center">
             <input
               type="email"
               placeholder="E-mail"
@@ -80,87 +133,158 @@ export default function LoginPage() {
                   message: 'Invalid email address',
                 },
               })}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="px-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+              style={{ 
+                color: '#000',
+                width: '321px',
+                height: '36px',
+                borderRadius: '10px'
+              }}
             />
-            {errors.email && (
-              <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
-            )}
           </div>
+          {errors.email && (
+            <div className="flex justify-center">
+              <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+            </div>
+          )}
 
-          <div>
-            <input
-              type="password"
-              placeholder="Password"
-              {...register('password', {
-                required: 'Password is required',
-                minLength: {
-                  value: 6,
-                  message: 'Password must be at least 6 characters',
-                },
-              })}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-            />
-            {errors.password && (
+          <div className="flex justify-center">
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Password"
+                {...register('password', {
+                  required: 'Password is required',
+                  minLength: {
+                    value: 6,
+                    message: 'Password must be at least 6 characters',
+                  },
+                })}
+                className="px-3 pr-10 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+                style={{ 
+                  color: '#000',
+                  width: '321px',
+                  height: '36px',
+                  borderRadius: '10px'
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+              >
+                {showPassword ? <HiEyeOff size={18} /> : <HiEye size={18} />}
+              </button>
+            </div>
+          </div>
+          {errors.password && (
+            <div className="flex justify-center">
               <p className="text-red-500 text-xs mt-1">
                 {errors.password.message}
               </p>
-            )}
-          </div>
+            </div>
+          )}
 
-          <div className="text-right">
+          <div className="text-center">
             <Link
               href="/forgot-password"
-              className="text-blue-600 text-sm hover:underline"
+              style={{ 
+                color: '#1E00FF',
+                fontSize: '15px'
+              }}
+              className="hover:underline"
             >
               Forgot password?
             </Link>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary-dark text-white py-3 rounded-lg font-medium hover:bg-primary-dark/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Logging in...' : 'Continue'}
-          </button>
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                width: '321px',
+                height: '36px',
+                backgroundColor: '#4A7450',
+                color: '#FFFFFF',
+                borderRadius: '10px',
+                fontWeight: 400
+              }}
+              className="hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Logging in...' : 'Continue'}
+            </button>
+          </div>
         </form>
 
-        {/* Divider */}
         <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">
+          <div className="flex items-center">
+            <div className="flex-1 border-t border-gray-300"></div>
+            <span 
+              className="px-2"
+              style={{ 
+                fontSize: '12px',
+                color: '#8A8A8A'
+              }}
+            >
               Don't have an account yet?
             </span>
+            <div className="flex-1 border-t border-gray-300"></div>
           </div>
         </div>
 
-        {/* Additional Buttons */}
-        <div className="space-y-3">
+        <div className="space-y-3 flex flex-col items-center">
           <Link
             href="/signup"
-            className="block w-full bg-primary-light text-black py-3 rounded-lg font-medium text-center hover:bg-primary-light/80 transition-colors"
+            style={{
+              width: '321px',
+              height: '36px',
+              backgroundColor: '#B1D158',
+              color: '#000000',
+              borderRadius: '10px',
+              fontWeight: 400,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            className="hover:opacity-90 transition-opacity"
           >
             Create an account
           </Link>
           <button
             type="button"
-            className="w-full bg-primary-light text-black py-3 rounded-lg font-medium hover:bg-primary-light/80 transition-colors"
+            style={{
+              width: '321px',
+              height: '36px',
+              backgroundColor: '#B1D158',
+              color: '#000000',
+              borderRadius: '10px',
+              fontWeight: 400
+            }}
+            className="hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
           >
+            <img 
+              src="/google.svg" 
+              alt="Google" 
+              className="w-5 h-5"
+            />
             Sign in with Google
           </button>
         </div>
 
-        {/* Terms */}
-        <p className="text-xs text-gray-500 text-center mt-6">
-          By clicking "Continue", I have read and agreed with the{' '}
-          <Link href="/terms" className="text-blue-600 underline">
+        <p 
+          className="text-center mt-6"
+          style={{ 
+            fontSize: '12px',
+            color: '#8A8A8A'
+          }}
+        >
+          By clicking "Continue", I have read and agreed<br />with the{' '}
+          <Link href="/terms" style={{ color: '#1E00FF' }} className="underline">
             Term Sheet,
           </Link>{' '}
           and{' '}
-          <Link href="/privacy" className="text-blue-600 underline">
+          <Link href="/privacy" style={{ color: '#1E00FF' }} className="underline">
             Privacy Policy
           </Link>
         </p>

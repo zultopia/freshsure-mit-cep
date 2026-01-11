@@ -10,8 +10,13 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'FreshSure - Food Quality & Supply Chain Management',
-  description: 'Manage your food quality and supply chain with FreshSure',
+  title: 'FreSure - Food Quality & Supply Chain Management',
+  description: 'Manage your food quality and supply chain with FreSure',
+  icons: {
+    icon: '/logo.svg',
+    shortcut: '/logo.svg',
+    apple: '/logo.svg',
+  },
 }
 
 export default function RootLayout({

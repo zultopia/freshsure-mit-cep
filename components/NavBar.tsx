@@ -2,17 +2,28 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { HiHome, HiLightningBolt, HiChatAlt, HiUser } from 'react-icons/hi';
+import { HiHome, HiLightningBolt, HiChatAlt, HiUser, HiPlus } from 'react-icons/hi';
+import { useAuthStore } from '@/lib/store';
 
 const NavBar = () => {
   const pathname = usePathname();
+  const { user } = useAuthStore();
 
-  const navItems = [
-    { href: '/', icon: HiHome, label: 'Home' },
-    { href: '/actions', icon: HiLightningBolt, label: 'Actions' },
-    { href: '/feedback', icon: HiChatAlt, label: 'Feedback' },
-    { href: '/profile', icon: HiUser, label: 'Profile' },
-  ];
+  const isFarmer = user?.role === 'FARMER';
+
+  const navItems = isFarmer
+    ? [
+        { href: '/', icon: HiHome, label: 'Home' },
+        { href: '/add', icon: HiPlus, label: 'Add' },
+        { href: '/feedback', icon: HiChatAlt, label: 'Feedback' },
+        { href: '/profile', icon: HiUser, label: 'Profile' },
+      ]
+    : [
+        { href: '/', icon: HiHome, label: 'Home' },
+        { href: '/actions', icon: HiLightningBolt, label: 'Actions' },
+        { href: '/feedback', icon: HiChatAlt, label: 'Feedback' },
+        { href: '/profile', icon: HiUser, label: 'Profile' },
+      ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 md:hidden">

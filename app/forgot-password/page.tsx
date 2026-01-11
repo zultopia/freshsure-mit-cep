@@ -17,13 +17,12 @@ export default function ForgotPasswordPage() {
   } = useForm<ForgotPasswordForm>();
 
   const onSubmit = async (data: ForgotPasswordForm) => {
-    // TODO: Implement password reset API call
     console.log('Password reset requested for:', data.email);
     setSubmitted(true);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary-light to-white flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
         <h1 className="text-3xl font-bold text-center mb-2">Forgot Password?</h1>
         <p className="text-gray-500 text-center mb-8 text-sm">

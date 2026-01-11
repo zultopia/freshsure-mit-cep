@@ -14,12 +14,10 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    // Wait for Zustand to hydrate from localStorage
     if (!_hasHydrated) {
       return;
     }
 
-    // After hydration, check if user exists
     if (!user) {
       router.push('/login');
       return;
@@ -28,7 +26,6 @@ export default function AuthGuard({ children }: AuthGuardProps) {
     setIsChecking(false);
   }, [user, _hasHydrated, router]);
 
-  // Show loading while checking auth or hydrating
   if (!_hasHydrated || isChecking) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -42,4 +39,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
   return <>{children}</>;
 }
+
+
+
 

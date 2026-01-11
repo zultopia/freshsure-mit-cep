@@ -7,6 +7,7 @@ interface User {
   email: string;
   role: string;
   companyId: string;
+  profileImage?: string;
 }
 
 interface AuthState {
@@ -25,7 +26,8 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       _hasHydrated: false,
       setAuth: (user, token) => {
-        // Ensure token is saved to localStorage immediately for API interceptor
+        // Simpan path asli dari database tanpa konversi
+        // Konversi hanya dilakukan saat menampilkan gambar di component
         if (typeof window !== 'undefined') {
           localStorage.setItem('token', token);
           localStorage.setItem('user', JSON.stringify(user));
@@ -33,7 +35,6 @@ export const useAuthStore = create<AuthState>()(
         set({ user, token });
       },
       logout: () => {
-        // Clear localStorage
         if (typeof window !== 'undefined') {
           localStorage.removeItem('token');
           localStorage.removeItem('user');
@@ -57,6 +58,8 @@ export const useAuthStore = create<AuthState>()(
         };
       }),
       onRehydrateStorage: () => (state) => {
+        // Jangan konversi path di sini, biarkan path asli dari database tetap utuh
+        // Konversi hanya dilakukan saat menampilkan di component
         state?.setHasHydrated(true);
       },
     }

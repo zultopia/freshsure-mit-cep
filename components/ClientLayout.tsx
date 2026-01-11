@@ -16,12 +16,10 @@ export default function ClientLayout({
   const pathname = usePathname();
   const hasHydrated = useHydration();
   
-  // Start with empty className to match SSR (always start the same)
   const [marginClass, setMarginClass] = useState('');
-  const [isPublicRoute, setIsPublicRoute] = useState(true); // Default to true to match empty className
+  const [isPublicRoute, setIsPublicRoute] = useState(true);
 
   useEffect(() => {
-    // Only update after hydration to ensure SSR/client match
     if (hasHydrated && pathname) {
       const publicRoute = publicRoutes.includes(pathname);
       setIsPublicRoute(publicRoute);
@@ -29,7 +27,6 @@ export default function ClientLayout({
     }
   }, [hasHydrated, pathname]);
 
-  // Only show nav after hydration to avoid mismatch
   const shouldShowNav = hasHydrated && !isPublicRoute;
 
   return (

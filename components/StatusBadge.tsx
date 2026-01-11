@@ -4,15 +4,20 @@ interface StatusBadgeProps {
 }
 
 const StatusBadge = ({ status, className = '' }: StatusBadgeProps) => {
-  const styles = {
-    Good: 'bg-green-100 text-green-800 border-green-300',
-    Warning: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-    Critical: 'bg-red-100 text-red-800 border-red-300',
+  const backgroundColors = {
+    Good: '#B1D158',
+    Warning: '#EDD44E',
+    Critical: '#FF8D8D',
   };
 
   return (
     <span
-      className={`px-3 py-1 rounded-full text-xs font-medium border ${styles[status]} ${className}`}
+      className={`px-3 py-1 rounded-full text-xs font-medium border ${className}`}
+      style={{
+        backgroundColor: backgroundColors[status],
+        color: '#000000',
+        borderColor: backgroundColors[status],
+      }}
     >
       {status}
     </span>

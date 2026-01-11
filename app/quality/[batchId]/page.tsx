@@ -95,7 +95,7 @@ export default function QualityPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary-light to-white pb-20 md:pb-8">
+    <div className="min-h-screen pb-20 md:pb-8">
       <div className="max-w-4xl mx-auto px-4 py-6 md:py-8">
         <div className="flex items-center gap-4 mb-6">
           <Link
@@ -109,7 +109,7 @@ export default function QualityPage() {
 
         {/* Quality Scores Chart */}
         {scores.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
             <h2 className="text-xl font-bold mb-4">Quality Scores Over Time</h2>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={chartData}>
@@ -131,7 +131,7 @@ export default function QualityPage() {
 
         {/* Quality Scores Table */}
         {scores.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
             <h2 className="text-xl font-bold mb-4">Quality Scores</h2>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -170,7 +170,7 @@ export default function QualityPage() {
 
         {/* Predictions */}
         {predictions.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-bold mb-4">Shelf Life Predictions</h2>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -208,7 +208,7 @@ export default function QualityPage() {
         )}
 
         {scores.length === 0 && predictions.length === 0 && (
-          <div className="bg-white rounded-lg shadow-sm p-12 text-center">
+          <div className="bg-white rounded-lg shadow-md p-12 text-center">
             <p className="text-gray-500">No quality data available for this batch</p>
           </div>
         )}

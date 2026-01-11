@@ -17,10 +17,10 @@ const DesktopNav = () => {
   return (
     <nav className="hidden md:block fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-gray-200 p-6">
       <div className="mb-8">
-        <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center mx-auto mb-4">
-          <span className="text-gray-600 font-bold">LOGO</span>
+        <div className="flex items-center justify-center mx-auto mb-4">
+          <img src="/logo.svg" alt="FreSure Logo" className="h-16 w-auto" />
         </div>
-        <h2 className="text-xl font-bold text-center">FreshSure</h2>
+        <h2 className="text-xl font-bold text-center">FreSure</h2>
       </div>
       <ul className="space-y-2">
         {navItems.map((item) => {

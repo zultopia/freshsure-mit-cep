@@ -6,8 +6,9 @@ import Link from 'next/link';
 import { useAuthStore } from '@/lib/store';
 import { authAPI } from '@/lib/api';
 import NavBar from '@/components/NavBar';
-import { HiUser } from 'react-icons/hi';
+import { HiUser, HiPencil, HiGlobe, HiBell, HiLockClosed, HiBookOpen, HiExclamation } from 'react-icons/hi';
 import { useHydration } from '@/lib/useHydration';
+import { getImageUrl } from '@/lib/image-utils';
 
 interface User {
   id: string;
@@ -15,6 +16,7 @@ interface User {
   email: string;
   role: string;
   companyId: string;
+  profileImage?: string;
 }
 
 export default function ProfilePage() {
@@ -25,7 +27,6 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Wait for both Zustand and client hydration
     if (!hasHydrated || !_hasHydrated) {
       return;
     }
@@ -35,25 +36,24 @@ export default function ProfilePage() {
       return;
     }
     
-    // Set initial profile from user to show immediately
     setProfile(user);
     setLoading(false);
-    
-    // Then load fresh data from API
     loadProfile();
-  }, [user, _hasHydrated, hasHydrated]);
+  }, [user, _hasHydrated, hasHydrated, router]);
 
   const loadProfile = async () => {
     try {
-      // Don't show loading spinner, just update silently
       const data = await authAPI.getProfile().catch((err) => {
         console.warn('Profile API error:', err);
-        return user; // Fallback to user from store
+        return null;
       });
+      
+      // Simpan path asli dari database tanpa konversi
+      // Konversi hanya dilakukan saat menampilkan gambar menggunakan getImageUrl()
       setProfile(data || user);
     } catch (error) {
       console.error('Error loading profile:', error);
-      // Keep existing profile data
+      setProfile(user);
     }
   };
 
@@ -62,7 +62,6 @@ export default function ProfilePage() {
     router.push('/login');
   };
 
-  // Show loading only if not hydrated yet
   if (!hasHydrated || !_hasHydrated || (loading && !profile)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -75,49 +74,84 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary-light to-white pb-20 md:pb-8">
-      <div className="max-w-2xl mx-auto px-4 py-6 md:py-8">
+    <div className="min-h-screen pb-20 md:pb-8">
+      <div className="max-w-2xl mx-auto px-4 pt-8 md:pt-12 pb-6 md:pb-8">
         {/* Header */}
-        <h1 className="text-3xl font-bold mb-6">Profile</h1>
+        <h1 
+          className="mb-6 font-semibold text-center"
+          style={{ fontSize: '25px' }}
+        >
+          Profile
+        </h1>
 
-        {/* User Info */}
-        <div className="bg-white rounded-lg p-6 mb-6 flex items-center space-x-4">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-            <HiUser className="text-2xl text-gray-600" />
-          </div>
+        {/* User Info Section */}
+        <div 
+          className="bg-white rounded-lg p-6 mb-6 flex items-center space-x-4 shadow-md"
+          style={{ borderRadius: '20px' }}
+        >
+          {getImageUrl(user?.profileImage || profile?.profileImage) ? (
+            <img
+              key={user?.profileImage || profile?.profileImage}
+              src={getImageUrl(user?.profileImage || profile?.profileImage) || ''}
+              alt="Profile"
+              className="w-20 h-20 rounded-full object-cover flex-shrink-0 border-2 border-gray-200"
+            />
+          ) : (
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0 border-2 border-gray-200">
+              <HiUser className="text-4xl text-gray-400" />
+            </div>
+          )}
           <div>
-            <h2 className="text-xl font-bold">{profile?.name || 'User'}</h2>
-            <p className="text-sm text-gray-500">{profile?.email || ''}</p>
-            <p className="text-xs text-gray-400 mt-1">Lorem ipsum</p>
+            <h2 className="text-xl font-bold text-gray-900">{user?.name || profile?.name || 'User'}</h2>
+            <p className="text-sm text-gray-500 mt-1">{user?.email || profile?.email}</p>
           </div>
         </div>
 
-        {/* Menu Items */}
-        <div className="space-y-3 mb-6">
+        {/* Menu Items in White Card */}
+        <div 
+          className="bg-white rounded-lg mb-6 overflow-hidden shadow-md"
+          style={{ borderRadius: '20px' }}
+        >
           <Link
             href="/settings"
-            className="block bg-gray-100 rounded-lg p-4 hover:bg-gray-200 transition-colors"
+            className="flex items-center px-6 py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150"
           >
-            <span className="font-medium">Settings</span>
+            <HiPencil className="text-lg text-gray-600 mr-4" />
+            <span className="text-base font-medium text-gray-900">Edit profile</span>
           </Link>
-          <div className="bg-gray-100 rounded-lg p-4">
-            <span className="font-medium text-gray-400">Menu Item 2</span>
+          <div className="flex items-center px-6 py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 cursor-pointer">
+            <HiGlobe className="text-lg text-gray-600 mr-4" />
+            <span className="text-base font-medium text-gray-900">Language</span>
           </div>
-          <div className="bg-gray-100 rounded-lg p-4">
-            <span className="font-medium text-gray-400">Menu Item 3</span>
+          <div className="flex items-center px-6 py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 cursor-pointer">
+            <HiBell className="text-lg text-gray-600 mr-4" />
+            <span className="text-base font-medium text-gray-900">Notification</span>
+          </div>
+          <div className="flex items-center px-6 py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 cursor-pointer">
+            <HiLockClosed className="text-lg text-gray-600 mr-4" />
+            <span className="text-base font-medium text-gray-900">Change password</span>
           </div>
           <Link
             href="/terms"
-            className="block bg-gray-100 rounded-lg p-4 hover:bg-gray-200 transition-colors"
+            className="flex items-center px-6 py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150"
           >
-            <span className="font-medium">Terms and Conditions</span>
+            <HiBookOpen className="text-lg text-gray-600 mr-4" />
+            <span className="text-base font-medium text-gray-900">Terms and Conditions</span>
+          </Link>
+          <Link
+            href="/privacy"
+            className="flex items-center px-6 py-4 hover:bg-gray-50 transition-colors duration-150"
+          >
+            <HiExclamation className="text-lg text-gray-600 mr-4" />
+            <span className="text-base font-medium text-gray-900">Privacy policy</span>
           </Link>
         </div>
 
         {/* Log Out Button */}
         <button
           onClick={handleLogout}
-          className="w-full bg-red-500 text-white py-3 rounded-lg font-medium hover:bg-red-600 transition-colors"
+          className="w-full bg-red-500 text-white py-3 rounded-lg font-medium hover:bg-red-600 transition-colors duration-200 shadow-sm hover:shadow-md"
+          style={{ borderRadius: '10px', fontSize: '15px' }}
         >
           Log Out
         </button>

@@ -1,6 +1,6 @@
-# FreshSure Frontend
+# FreSure Frontend
 
-Frontend web application for FreshSure - Food Quality & Supply Chain Management System.
+Frontend web application for FreSure - Food Quality & Supply Chain Management System.
 
 ## Features
 
@@ -82,7 +82,7 @@ freshsure-mit-cep/
 
 ## API Integration
 
-The application integrates with the FreshSure backend API. All API calls are centralized in `lib/api.ts`.
+The application integrates with the FreSure backend API. All API calls are centralized in `lib/api.ts`.
 
 ### Authentication
 - Login: `POST /auth/login`

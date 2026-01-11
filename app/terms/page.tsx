@@ -24,8 +24,9 @@ export default function TermsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white pb-20 md:pb-8">
-      <div className="max-w-4xl mx-auto px-4 py-6 md:py-8">
+    <div className="min-h-screen pb-20 md:pb-8">
+      <div className="max-w-4xl mx-auto px-4 pt-8 md:pt-12 pb-6 md:pb-8">
+        {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <button
             onClick={handleBack}
@@ -33,34 +34,41 @@ export default function TermsPage() {
           >
             <HiArrowLeft className="text-xl" />
           </button>
-          <h1 className="text-3xl font-bold">Terms and Conditions</h1>
+          <h1 
+            className="font-semibold"
+            style={{ fontSize: '25px' }}
+          >
+            Terms and Conditions
+          </h1>
         </div>
-        <div className="prose max-w-none">
+
+        {/* Content Card */}
+        <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
           {lastUpdated && (
-            <p className="text-gray-600 mb-4">
+            <p className="text-sm text-gray-500 mb-6 pb-4 border-b border-gray-200">
               Last updated: {lastUpdated}
             </p>
           )}
-          <div className="space-y-4 text-gray-700">
-            <section>
-              <h2 className="text-xl font-semibold mb-2">1. Acceptance of Terms</h2>
-              <p>
-                By accessing and using FreshSure, you accept and agree to be bound
+          <div className="space-y-6 text-gray-700">
+            <section className="pb-4 border-b border-gray-100 last:border-b-0">
+              <h2 className="text-xl font-semibold mb-3 text-gray-900">1. Acceptance of Terms</h2>
+              <p className="text-base leading-relaxed">
+                By accessing and using FreSure, you accept and agree to be bound
                 by the terms and provision of this agreement.
               </p>
             </section>
-            <section>
-              <h2 className="text-xl font-semibold mb-2">2. Use License</h2>
-              <p>
-                Permission is granted to temporarily use FreshSure for personal,
+            <section className="pb-4 border-b border-gray-100 last:border-b-0">
+              <h2 className="text-xl font-semibold mb-3 text-gray-900">2. Use License</h2>
+              <p className="text-base leading-relaxed">
+                Permission is granted to temporarily use FreSure for personal,
                 non-commercial transitory viewing only.
               </p>
             </section>
-            <section>
-              <h2 className="text-xl font-semibold mb-2">3. Disclaimer</h2>
-              <p>
-                The materials on FreshSure are provided on an 'as is' basis.
-                FreshSure makes no warranties, expressed or implied, and hereby
+            <section className="pb-4 border-b border-gray-100 last:border-b-0">
+              <h2 className="text-xl font-semibold mb-3 text-gray-900">3. Disclaimer</h2>
+              <p className="text-base leading-relaxed">
+                The materials on FreSure are provided on an 'as is' basis.
+                FreSure makes no warranties, expressed or implied, and hereby
                 disclaims and negates all other warranties.
               </p>
             </section>
