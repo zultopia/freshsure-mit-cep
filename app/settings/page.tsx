@@ -40,8 +40,13 @@ export default function SettingsPage() {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !user) {
+      router.push('/login');
+    }
+  }, [user, router]);
+
   if (!user) {
-    router.push('/login');
     return null;
   }
 

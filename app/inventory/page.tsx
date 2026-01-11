@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/lib/store';
@@ -20,7 +20,7 @@ interface InventoryItem {
   image?: string;
 }
 
-export default function InventoryPage() {
+function InventoryContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const filter = searchParams.get('filter');
@@ -445,6 +445,21 @@ export default function InventoryPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function InventoryPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <InventoryContent />
+    </Suspense>
   );
 }
 
