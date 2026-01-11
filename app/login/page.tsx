@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { HiEye, HiEyeOff } from 'react-icons/hi';
-import { authAPI } from '@/lib/api';
 import { useAuthStore } from '@/lib/store';
 
 interface LoginForm {
@@ -26,15 +25,60 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm<LoginForm>();
 
+  // Dummy login function - tidak perlu API call
+  const dummyLogin = (email: string, password: string) => {
+    // Dummy users data
+    const dummyUsers = {
+      'farmer@example.com': {
+        user: {
+          id: 'farmer-1',
+          name: 'Farmer User',
+          email: 'farmer@example.com',
+          role: 'FARMER',
+          companyId: 'company-1',
+          profileImage: undefined,
+        },
+        token: 'dummy-token-farmer-123',
+      },
+      'retail@example.com': {
+        user: {
+          id: 'retail-1',
+          name: 'Retail User',
+          email: 'retail@example.com',
+          role: 'RETAIL',
+          companyId: 'company-2',
+          profileImage: undefined,
+        },
+        token: 'dummy-token-retail-123',
+      },
+    };
+
+    // Check if email exists in dummy users
+    if (dummyUsers[email as keyof typeof dummyUsers]) {
+      const userData = dummyUsers[email as keyof typeof dummyUsers];
+      // Check password
+      if (password === 'password123') {
+        return userData;
+      }
+    }
+    return null;
+  };
+
   const onSubmit = async (data: LoginForm) => {
     try {
       setLoading(true);
       setError('');
-      const response = await authAPI.login(data.email, data.password);
+      
+      // Use dummy login instead of API call
+      const response = dummyLogin(data.email, data.password);
+      
+      if (!response) {
+        setError('Invalid email or password. Please check your credentials and try again.');
+        setLoading(false);
+        return;
+      }
       
       const user = response.user;
-      // Simpan path asli dari database tanpa konversi
-      // Konversi hanya dilakukan saat menampilkan gambar di component
       setAuth(user, response.token);
       
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -42,37 +86,7 @@ export default function LoginPage() {
       router.push('/');
       router.refresh();
     } catch (err: any) {
-      let errorMessage = 'Login failed. Please try again.';
-      
-      if (err.response) {
-        const status = err.response.status;
-        const data = err.response.data;
-        
-        if (status === 401) {
-          errorMessage = 'Invalid email or password. Please check your credentials and try again.';
-        } else if (status === 404) {
-          errorMessage = 'User not found. Please check your email and try again.';
-        } else if (status === 400) {
-          errorMessage = data?.error || data?.message || 'Invalid request. Please check your information and try again.';
-        } else if (status >= 500) {
-          errorMessage = 'Server is temporarily unavailable. Please try again in a few moments.';
-        } else if (data?.error) {
-          errorMessage = data.error;
-        } else if (data?.message) {
-          errorMessage = data.message;
-        }
-      } else if (err.message) {
-        const msg = err.message.toLowerCase();
-        if (msg.includes('fetch') || msg.includes('network') || msg.includes('failed to fetch')) {
-          errorMessage = 'Unable to connect to server. Please check your internet connection and try again.';
-        } else if (msg.includes('timeout')) {
-          errorMessage = 'Request timed out. Please try again.';
-        } else if (!msg.includes('login') && !msg.includes('password') && !msg.includes('email')) {
-          errorMessage = 'Something went wrong. Please try again.';
-        }
-      }
-      
-      setError(errorMessage);
+      setError('Login failed. Please try again.');
       setLoading(false);
     }
   };
